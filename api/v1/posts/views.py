@@ -1,0 +1,40 @@
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from api.v1.posts.serializers import PostSerializer,PostViewSerializer
+from posts.models import ViewPost
+
+@api_view(["GET"])
+def posts(request):
+    context = {
+        "request":request
+    }
+    instances = ViewPost.objects.filter(is_deleted=False)
+    serializer = PostSerializer(instances,many=True,context = context)
+    response_data = {
+        "status_code":6000,
+        "data":serializer.data
+    }
+    return Response(response_data)
+
+
+@api_view(["GET"])
+def post(request,pk):
+
+    if ViewPost.objects.filter(pk=pk).exists():
+        instances = ViewPost.objects.get(pk=pk)
+        context = {
+            "request":request
+        }
+        serializer = PostViewSerializer(instances,context = context)
+        response_data = {
+            "status_code":6000,
+            "data":serializer.data
+        }
+        return Response(response_data)
+    else:
+        response_data = {
+            "status_code":6001,
+            "message":"No post founded"
+        }
+        return Response(response_data)
