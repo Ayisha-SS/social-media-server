@@ -2,12 +2,13 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from api.v1.posts.serializers import PostSerializer,PostViewSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 
 from posts.models import ViewPost
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def posts(request):
     context = {
         "request":request
@@ -22,7 +23,8 @@ def posts(request):
 
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def post(request,pk):
 
     if ViewPost.objects.filter(pk=pk).exists():
@@ -45,7 +47,8 @@ def post(request,pk):
     
 
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def protected(request,pk):
 
     if ViewPost.objects.filter(pk=pk).exists():

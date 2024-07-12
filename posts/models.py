@@ -14,9 +14,11 @@ class Categories(models.Model):
 class CreatePost(models.Model):
     title = models.CharField(max_length=200)
     created_by = models.CharField(max_length=200)
-    category = models.ForeignKey(Categories, on_delete=models.CASCADE)
+    category = models.CharField(max_length=255)
     image = models.ImageField(upload_to='posts/images/')
     description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
         db_table = 'posts_create'
