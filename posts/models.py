@@ -18,6 +18,9 @@ class CreatePost(models.Model):
     image = models.ImageField(upload_to='posts/images/')
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    like = models.BooleanField(default=False)
+    view = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
 
 
     class Meta:
