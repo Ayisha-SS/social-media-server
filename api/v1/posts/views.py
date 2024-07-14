@@ -47,8 +47,8 @@ def post(request,pk):
     
 
 @api_view(["GET"])
-# @permission_classes([IsAuthenticated])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
+# @permission_classes([AllowAny])
 def protected(request,pk):
 
     if ViewPost.objects.filter(pk=pk).exists():

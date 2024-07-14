@@ -7,7 +7,9 @@ from posts.models import ViewPost,CreatePost
 
 
 @api_view(['GET', 'POST','DELETE'])
-@permission_classes([AllowAny])  
+@permission_classes([IsAuthenticated])
+
+# @permission_classes([AllowAny])  
 def create_post(request):
     if request.method == 'GET':
         posts = CreatePost.objects.all()  
@@ -35,10 +37,11 @@ def create_post(request):
                 return Response({"message": "Post deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
             return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
     
+    
 
 @api_view(["GET"])
-# @permission_classes([IsAuthenticated])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
+# @permission_classes([AllowAny])
 def view_post(request,pk):
 
     if CreatePost.objects.filter(pk=pk).exists():
