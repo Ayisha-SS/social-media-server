@@ -11,6 +11,8 @@ from posts.models import ViewPost,CreatePost
 
 # @permission_classes([AllowAny])  
 def create_post(request):
+    
+    
     if request.method == 'GET':
         posts = CreatePost.objects.all()  
         serializer = CreateSerializer(posts, many=True,context={'request': request})  
@@ -18,18 +20,15 @@ def create_post(request):
 
     elif request.method == 'POST':
         
-        # try:
             serializer = CreateSerializer(data=request.data,context={'request': request})
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        # except Exception as e:
-        #     return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+       
         
     elif request.method == 'DELETE':
         
-        # try:
             post_id = request.query_params.get('id')  
             post = CreatePost.objects.filter(id=post_id).first()
             if post:
@@ -62,5 +61,3 @@ def view_post(request,pk):
         }
         return Response(response_data)
     
-
-# 

@@ -40,12 +40,24 @@ class ViewPost(models.Model):
     like = models.BooleanField(default=False)
     view = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
+    
 
     class Meta:
         db_table = 'posts_view'
 
     def __str__(self):
         return self.title
+    
+
+class Comments(models.Model):
+    comments = models.TextField()
+
+    class Meta:
+        db_table = 'posts_comment'
+
+    def __str__(self):
+        return self.comments
+    
     
 
     

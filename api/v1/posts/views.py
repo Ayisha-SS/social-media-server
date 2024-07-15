@@ -1,10 +1,11 @@
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from api.v1.posts.serializers import PostSerializer,PostViewSerializer
+from api.v1.posts.serializers import PostSerializer,PostViewSerializer,CommentSerializer
 from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.views import APIView
 
-from posts.models import ViewPost
+from posts.models import ViewPost,Comments
 
 @api_view(["GET"])
 # @permission_classes([IsAuthenticated])
@@ -13,6 +14,7 @@ def posts(request):
     context = {
         "request":request
     }
+    
     instances = ViewPost.objects.filter(is_deleted=False)
     serializer = PostSerializer(instances,many=True,context = context)
     response_data = {
@@ -70,4 +72,11 @@ def protected(request,pk):
         return Response(response_data)
     
 
+class CreateCommentView(APIView):
+    def post(self, request, pk):
+        post = ViewPost.objects.get(pk=pk)
+        comment = Comments(text=request.data['text'], post=post, created_by=request.user)
+        comment.save()
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data)
 
