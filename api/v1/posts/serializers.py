@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
-from posts.models import ViewPost,Comments
+from posts.models import ViewPost
 
 class PostSerializer(ModelSerializer):
 
@@ -26,8 +26,3 @@ class PostViewSerializer(ModelSerializer):
         return instance.category.name
     
 
-class CommentSerializer(ModelSerializer):
-
-    class Meta:
-        model = Comments
-        fields = ("comments")

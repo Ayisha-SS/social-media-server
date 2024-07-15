@@ -13,12 +13,5 @@ class CreateSerializer(serializers.ModelSerializer):
         return CreatePost.objects.create(**validated_data)
 
 
-class CreateViewSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField()
-
-
-    class Meta:
-        fields = ("id",'title','image','category','created_by','description','created_at')
-        model = CreatePost
 
    
