@@ -87,8 +87,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# AUTH_USER_MODEL = 'posts.CustomUser'
-
 
 LANGUAGE_CODE = 'en-us'
 
@@ -106,7 +104,6 @@ STATICFILES_DIRS = [
 
 
 MEDIA_URL = "/media/"
-# MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 

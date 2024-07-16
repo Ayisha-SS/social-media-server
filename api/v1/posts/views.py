@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from posts.models import ViewPost
 
 @api_view(["GET"])
-# @permission_classes([IsAuthenticated])
 @permission_classes([AllowAny])
 def posts(request):
     context = {
@@ -24,7 +23,6 @@ def posts(request):
 
 
 @api_view(["GET"])
-# @permission_classes([IsAuthenticated])
 @permission_classes([AllowAny])
 def post(request,pk):
 
@@ -49,7 +47,6 @@ def post(request,pk):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-# @permission_classes([AllowAny])
 def protected(request,pk):
 
     if ViewPost.objects.filter(pk=pk).exists():
