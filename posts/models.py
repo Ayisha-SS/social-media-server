@@ -58,6 +58,34 @@ class Comments(models.Model):
     def __str__(self):
         return self.comments
     
+class Signup(models.Model):
+    username =models.CharField(max_length=200)
+    email = models.EmailField(max_length=200)
+    password= models.CharField(max_length=200)
+
+    class Meta:
+        db_table = 'posts_signup'
+
+    def __str__(self):
+        return self.username
+
+    
+class Role(models.TextChoices):
+    USER = 'user', 'User'
+    ADMIN = 'admin', 'Admin'
+
+
+class LogIn(models.Model):
+    username = models.EmailField(max_length=200)
+    password= models.CharField(max_length=200)
+    role = models.CharField(max_length=10, choices=Role.choices, default=Role.USER)
+
+    class Meta:
+        db_table = 'posts_login'
+
+    def __str__(self):
+        return self.username
+
     
 
 
