@@ -42,9 +42,17 @@ def login(request):
     if user is not None:
         refresh = RefreshToken.for_user(user)
         token_data = {
-            'efresh': str(refresh),
+            'refresh': str(refresh),
             'access': str(refresh.access_token)
         }
         return Response(token_data, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_view(request):
+    refresh_token = RefreshToken(request.data.get('refresh_token'))
+    refresh_token.blacklist()
+    return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
