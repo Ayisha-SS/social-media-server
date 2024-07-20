@@ -27,10 +27,16 @@ def signup(request):
         email=email,
         password=make_password(password),
         first_name=name,
-        is_active=True
+        # is_active=True
     )
 
-    return Response({"message": "Account created successfully"}, status=status.HTTP_201_CREATED)
+    refresh = RefreshToken.for_user(user)
+    token_data = {
+    'refresh': str(refresh),
+    'access': str(refresh.access_token)
+  }
+
+    return Response({"message": "Account created successfully"},token_data, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -38,13 +44,15 @@ def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
 
-    user = authenticate(username=email, password=password)
+    user = authenticate(email=email, password=password)
     if user is not None:
+        login(request, user)
         refresh = RefreshToken.for_user(user)
         token_data = {
             'refresh': str(refresh),
             'access': str(refresh.access_token)
         }
+        print(user.is_active)
         return Response(token_data, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
