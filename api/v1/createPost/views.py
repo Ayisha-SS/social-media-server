@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from posts.models import CreatePost
 
 
-@api_view(['GET', 'POST','DELETE'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 
 def create_post(request):
@@ -28,17 +28,6 @@ def create_post(request):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
        
-        
-    elif request.method == 'DELETE':
-        
-            post_id = request.query_params.get('id')  
-            post = get_object_or_404(CreatePost, id=post_id)
-            if post:
-                post.delete()
-                return Response({"message": "Post deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
-            return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
     
     
-
-#
     
