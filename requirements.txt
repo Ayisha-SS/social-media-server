@@ -3,4 +3,5 @@ rest Framework  - pip install djangorestframework
 image           - pip install pillow
 simple jwt      - pip install djangorestfrmework-simplejwt
 cors headers    - pip install django-cors-headers
+requests        - pip install requests
 

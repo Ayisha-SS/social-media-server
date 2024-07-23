@@ -130,3 +130,62 @@
 #         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
+
+
+
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def signup(request):
+#     email = request.data.get('email')
+#     password = request.data.get('password')
+#     name = request.data.get('name')
+
+#     if not all([email, password, name]):
+#         return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
+
+#     if User.objects.filter(username=email).exists():
+#         return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+#     user = User.objects.create_user(
+#         username=email,
+#         email=email,
+#         # password=make_password(password),
+#         password=password,
+#         first_name=name,
+#         is_active=True
+#     )
+
+#     refresh = RefreshToken.for_user(user)
+#     token_data = {
+#     'refresh': str(refresh),
+#     'access': str(refresh.access_token)
+#   }
+
+#     return Response({"message": "Account created successfully"}, status=status.HTTP_201_CREATED)
+
+# @api_view(['POST'])
+# @permission_classes([AllowAny])
+# def login(request):
+#     email = request.data.get('email')
+#     password = request.data.get('password')
+
+#     user = authenticate(email=email, password=password)
+#     if user is not None:
+#         login(request, user)
+#         refresh = RefreshToken.for_user(user)
+#         token_data = {
+#             'refresh': str(refresh),
+#             'access': str(refresh.access_token)
+#         }
+#         print(user.is_active)
+#         return Response(token_data, status=status.HTTP_200_OK)
+#     else:
+#         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+    
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def logout_view(request):
+#     refresh_token = RefreshToken(request.data.get('refresh_token'))
+#     refresh_token.blacklist()
+#     return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)

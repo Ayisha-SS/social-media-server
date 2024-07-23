@@ -1,66 +1,66 @@
-
+import requests
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view,permission_classes
-from django.contrib.auth import authenticate, login
+
+
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def signup(request):
-    email = request.data.get('email')
-    password = request.data.get('password')
-    name = request.data.get('name')
+def create(request):
 
-    if not all([email, password, name]):
-        return Response({"error": "Missing required fields"}, status=status.HTTP_400_BAD_REQUEST)
+    email = request.data['email']
+    password = request.data['password']
+    username = request.data['username']
 
-    if User.objects.filter(username=email).exists():
-        return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
-    user = User.objects.create_user(
-        username=email,
-        email=email,
-        password=make_password(password),
-        first_name=name,
-        # is_active=True
-    )
+    if not User.objects.filter(username=email).exists():
 
-    refresh = RefreshToken.for_user(user)
-    token_data = {
-    'refresh': str(refresh),
-    'access': str(refresh.access_token)
-  }
+        User.objects.create_user(
+            username=email,
+            password=password,
+            first_name=username
+        )
 
-    return Response({"message": "Account created successfully"},token_data, status=status.HTTP_201_CREATED)
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def login(request):
-    email = request.data.get('email')
-    password = request.data.get('password')
-
-    user = authenticate(email=email, password=password)
-    if user is not None:
-        login(request, user)
-        refresh = RefreshToken.for_user(user)
-        token_data = {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token)
+        headers = {
+            "Content-Type":"application/json"
         }
-        print(user.is_active)
-        return Response(token_data, status=status.HTTP_200_OK)
-    else:
-        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-    
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def logout_view(request):
-    refresh_token = RefreshToken(request.data.get('refresh_token'))
-    refresh_token.blacklist()
-    return Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
+        data = f'"username":"{email}","password":"{password}"'
+        final_data = "{" + data + "}"
+
+
+        protocol = "http://"
+        if request.is_secure():
+            protocol = "https://"
+
+        host = request.get_host()
+
+        url = protocol + host + "/api/v1/auth/token/"
+
+        response = requests.post(url,headers=headers,data=final_data)
+
+        if response.status_code == 200:
+
+            response_data = {
+                "status_code":201,
+                "data":response.json(),
+                "message":"Account created"
+            }
+
+        else:
+             response_data = {
+            "status_code":400,
+            "data":"An error occured"
+        }
+    else:
+        response_data = {
+            "status_code":400,
+            "data":"User exists"
+        }
+
+    return Response(response_data,status=response_data["status_code"])
