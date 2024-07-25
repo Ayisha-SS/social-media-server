@@ -16,6 +16,7 @@ def create(request):
     email = request.data['email']
     password = request.data['password']
     username = request.data['username']
+    role = request.data['role']
 
 
     if not User.objects.filter(username=email).exists():
@@ -30,7 +31,7 @@ def create(request):
             "Content-Type":"application/json"
         }
 
-        data = f'"username":"{email}","password":"{password}"'
+        data = f'"username":"{email}","password":"{password}","role":"{role}"'
         final_data = "{" + data + "}"
 
 
