@@ -1,67 +1,81 @@
 import requests
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view,permission_classes
+from rest_framework.decorators import api_view, permission_classes
 
-
+from posts.models import User
+from . serializers import UserSerializers , UserCreateSerializer
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def create(request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+    role = request.data.get('role')
+    password = request.data.get('password')
+    print("*"*50)
+    print(username)
+    print("*"*50)
 
-    email = request.data['email']
-    password = request.data['password']
-    username = request.data['username']
-    role = request.data['role']
-
-
-    if not User.objects.filter(username=email).exists():
-
-        User.objects.create_user(
-            username=email,
-            password=password,
-            first_name=username
-        )
-
-        headers = {
-            "Content-Type":"application/json"
+    if User.objects.filter(username=username).exists():
+        response_data={
+            "message":"username already exist"
         }
-
-        data = f'"username":"{email}","password":"{password}","role":"{role}"'
-        final_data = "{" + data + "}"
-
-
-        protocol = "http://"
-        if request.is_secure():
-            protocol = "https://"
-
-        host = request.get_host()
-
-        url = protocol + host + "/api/v1/auth/token/"
-
-        response = requests.post(url,headers=headers,data=final_data)
-
-        if response.status_code == 200:
-
-            response_data = {
-                "status_code":201,
-                "data":response.json(),
-                "message":"Account created"
-            }
-
-        else:
-             response_data = {
-            "status_code":400,
-            "data":"An error occured"
+        return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+    
+    if User.objects.filter(email=email).exists():
+        response_data={
+            "status_code":6001,
+            "message":"email already exist"
         }
+        return Response(response_data)
+    
+    data = {
+        'username': username,
+        'email': email,
+        'role': role,
+        'password': password
+    }
+    serializer = UserCreateSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        response_data={
+            "status_code":6000,
+            "message":"User created Sucessfully"
+
+        }
+        return Response(response_data, status=201)
     else:
-        response_data = {
-            "status_code":400,
-            "data":"User exists"
+        response_data={
+            "status_code":6001,
+            "data":serializer.errors
         }
+        return Response(response_data, status=400)
 
-    return Response(response_data,status=response_data["status_code"])
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        if not username or not password:
+            return Response({'error': 'Please provide both username and password'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = authenticate(username=username, password=password)
+
+        if not user:
+            return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response({
+            'token': token.key,
+            'role': user.role
+        }, status=status.HTTP_200_OK)

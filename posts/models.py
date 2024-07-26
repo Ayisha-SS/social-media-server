@@ -86,6 +86,35 @@ class LogIn(models.Model):
     def __str__(self):
         return self.username
 
+ROLES = (
+    ('USER', 'USER'),
+    ('ADMIN', 'ADMIN')
+)
+
+
+class User(AbstractUser):
+    role = models.CharField(max_length=50, choices=ROLES, default="USER")
+
+    groups = models.ManyToManyField('auth.Group', related_name='posts_user_groups')
+    user_permissions = models.ManyToManyField('auth.Permission', related_name='posts_user_permissions')
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+
+class Customer(User):
+    base_role = User.role
+
+    class Meta:
+        proxy = True
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = self.base_role
+        super(Customer, self).save(*args, **kwargs)
+
+    def welcome(self):
+        return "Only for customers"
     
 
 

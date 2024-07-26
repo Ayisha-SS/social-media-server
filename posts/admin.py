@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from posts.models import CreatePost,ViewPost,Categories,LogIn,Signup,Role
+from posts.models import CreatePost, ViewPost, Categories, LogIn, Signup, User
 
 
 class CreatepostAdmin(admin.ModelAdmin):
@@ -14,3 +14,4 @@ admin.site.register(ViewPost,ViewpostAdmin)
 admin.site.register(Categories)
 admin.site.register(Signup)
 admin.site.register(LogIn)
+admin.site.register(User)
