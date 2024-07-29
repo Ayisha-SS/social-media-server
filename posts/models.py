@@ -1,5 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Categories(models.Model):
@@ -58,52 +60,27 @@ class Comments(models.Model):
     def __str__(self):
         return self.comments
     
-class Signup(models.Model):
-    username =models.CharField(max_length=200)
-    email = models.EmailField(max_length=200)
-    password= models.CharField(max_length=200)
 
-    class Meta:
-        db_table = 'posts_signup'
-
-    def __str__(self):
-        return self.username
-
-    
-class Role(models.TextChoices):
-    USER = 'user', 'User'
-    ADMIN = 'admin', 'Admin'
-
-
-class LogIn(models.Model):
-    username = models.EmailField(max_length=200)
-    password= models.CharField(max_length=200)
-    role = models.CharField(max_length=10, choices=Role.choices, default=Role.USER)
-
-    class Meta:
-        db_table = 'posts_login'
-
-    def __str__(self):
-        return self.username
-
-ROLES = (
-    ('USER', 'USER'),
-    ('ADMIN', 'ADMIN')
-)
 
 
 class User(AbstractUser):
-    role = models.CharField(max_length=50, choices=ROLES, default="USER")
-
-    groups = models.ManyToManyField('auth.Group', related_name='posts_user_groups')
-    user_permissions = models.ManyToManyField('auth.Permission', related_name='posts_user_permissions')
+    class Role(models.TextChoices):
+        ADMIN = "ADMIN", "Admin"
+        USER = "USER", "User"
+    base_role = Role.ADMIN
+    role = models.CharField(max_length=50, choices=Role.choices, default=base_role)
+    is_superuser = models.BooleanField(default=False)  
 
     def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = self.base_role
+            self.is_superuser = False 
         super().save(*args, **kwargs)
 
 
+
 class Customer(User):
-    base_role = User.role
+    base_role = User.Role.USER
 
     class Meta:
         proxy = True
@@ -111,10 +88,12 @@ class Customer(User):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role = self.base_role
+            self.is_superuser = False  
         super(Customer, self).save(*args, **kwargs)
 
     def welcome(self):
         return "Only for customers"
-    
 
+
+    
 

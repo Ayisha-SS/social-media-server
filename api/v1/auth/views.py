@@ -3,9 +3,11 @@ import requests
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.authtoken.models import Token
 
 from posts.models import User
 from . serializers import UserSerializers , UserCreateSerializer
@@ -18,6 +20,8 @@ def create(request):
     email = request.data.get('email')
     role = request.data.get('role')
     password = request.data.get('password')
+    # username = email
+    
     print("*"*50)
     print(username)
     print("*"*50)
@@ -58,24 +62,26 @@ def create(request):
         return Response(response_data, status=400)
 
 
-class LoginView(APIView):
-    permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
-        username = request.data.get('username')
-        password = request.data.get('password')
+# class LoginView(APIView):
+#     permission_classes = [AllowAny]
 
-        if not username or not password:
-            return Response({'error': 'Please provide both username and password'}, status=status.HTTP_400_BAD_REQUEST)
+#     def post(self, request, *args, **kwargs):
+#         email = request.data.get('email')
+#         password = request.data.get('password')
 
-        user = authenticate(username=username, password=password)
+#         if not email or not password:
+#             return Response({'error': 'Please provide both username and password'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not user:
-            return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+#         user = authenticate(username=email, password=password)
 
-        token, created = Token.objects.get_or_create(user=user)
 
-        return Response({
-            'token': token.key,
-            'role': user.role
-        }, status=status.HTTP_200_OK)
+#         if not user:
+#             return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+#         token, created = Token.objects.get_or_create(user=user)
+
+#         return Response({
+#             'token': token.key,
+#             'role': user.role
+#         }, status=status.HTTP_200_OK)
