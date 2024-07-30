@@ -22,26 +22,6 @@ class UserCreateSerializer(serializers.ModelSerializer):
         fields = ('username', 'email', 'role', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
-        # def create(self, validated_data):
-        #     role = validated_data['role']
-        #     password = make_password(validated_data['password'])
-        #     if role == "ADMIN":
-        #         user = User.objects.create_superuser(
-        #             username=validated_data['username'],
-        #             email=validated_data['email'],
-        #             password=password,
-        #             role=role,
-        #             is_superuser=True
-        #     )
-        #     elif role == "USER":
-        #         user = User.objects.create_user(
-        #             username=validated_data['username'],
-        #             email=validated_data['email'],
-        #             password=password,
-        #             role=role,
-        #             is_superuser=False
-        #         )
-        #     return user
 
     def create(self, validate_data):
         role = validate_data['role']
@@ -64,3 +44,27 @@ class UserCreateSerializer(serializers.ModelSerializer):
             user.set_password(validate_data['password'])
             user.save()
             return user
+
+
+
+
+        # def create(self, validated_data):
+        #     role = validated_data['role']
+        #     password = make_password(validated_data['password'])
+        #     if role == "ADMIN":
+        #         user = User.objects.create_superuser(
+        #             username=validated_data['username'],
+        #             email=validated_data['email'],
+        #             password=password,
+        #             role=role,
+        #             is_superuser=True
+        #     )
+        #     elif role == "USER":
+        #         user = User.objects.create_user(
+        #             username=validated_data['username'],
+        #             email=validated_data['email'],
+        #             password=password,
+        #             role=role,
+        #             is_superuser=False
+        #         )
+        #     return user
