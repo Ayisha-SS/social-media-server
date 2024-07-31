@@ -33,7 +33,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
                 username=validate_data['username'],
                 email=validate_data['email'],
                 # role=role
-                role=validate_data.get('role', User.Role.CUSTOMER)
+                role=validate_data.get('role', User.Role.USER)
             )
             user.set_password(validate_data['password'])
             user.save()
@@ -43,7 +43,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
                 username=validate_data['username'],
                 email=validate_data['email'],
                 # role=role
-                role=validate_data.get('role', User.Role.CUSTOMER)
+                role=validate_data.get('role', User.Role.USER)
             )
             user.set_password(validate_data['password'])
             user.save()
