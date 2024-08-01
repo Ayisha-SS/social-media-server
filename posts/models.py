@@ -4,6 +4,42 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
+
+
+
+class User(AbstractUser):
+    class Role(models.TextChoices):
+        ADMIN = "ADMIN", "Admin"
+        USER = "USER", "User"
+    base_role = Role.ADMIN
+    role = models.CharField(max_length=50, choices=Role.choices, default=base_role)
+    is_superuser = models.BooleanField(default=False)  
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = self.base_role
+            self.is_superuser = False 
+        super().save(*args, **kwargs)
+
+
+
+class Customer(User):
+    base_role = User.Role.USER
+
+    class Meta:
+        proxy = True
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = self.base_role
+            self.is_superuser = False  
+        super(Customer, self).save(*args, **kwargs)
+
+    def welcome(self):
+        return "Only for customers"
+
+
+
 class Categories(models.Model):
     name = models.CharField(max_length=100)
 
@@ -17,6 +53,7 @@ class Categories(models.Model):
 class CreatePost(models.Model):
     title = models.CharField(max_length=200)
     created_by = models.CharField(max_length=200)
+    # created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.CharField(max_length=255)
     image = models.ImageField(upload_to='posts/images/')
     description = models.TextField(blank=False, null=False)
@@ -61,38 +98,6 @@ class Comments(models.Model):
         return self.comments
     
 
-
-
-class User(AbstractUser):
-    class Role(models.TextChoices):
-        ADMIN = "ADMIN", "Admin"
-        USER = "USER", "User"
-    base_role = Role.ADMIN
-    role = models.CharField(max_length=50, choices=Role.choices, default=base_role)
-    is_superuser = models.BooleanField(default=False)  
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.role = self.base_role
-            self.is_superuser = False 
-        super().save(*args, **kwargs)
-
-
-
-class Customer(User):
-    base_role = User.Role.USER
-
-    class Meta:
-        proxy = True
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.role = self.base_role
-            self.is_superuser = False  
-        super(Customer, self).save(*args, **kwargs)
-
-    def welcome(self):
-        return "Only for customers"
 
 
     

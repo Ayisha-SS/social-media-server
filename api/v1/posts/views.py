@@ -67,5 +67,3 @@ def protected(request,pk):
         }
         return Response(response_data)
     
-
-

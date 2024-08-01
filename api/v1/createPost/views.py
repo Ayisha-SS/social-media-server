@@ -12,10 +12,11 @@ from posts.models import CreatePost
 @permission_classes([IsAuthenticated])
 
 def create_post(request):
-    
+
     
     if request.method == 'GET':
         posts = CreatePost.objects.all()  
+        # posts = CreatePost.objects.filter(created_by=request.user)
         serializer = CreateSerializer(posts, many=True,context={'request': request})  
         return Response(serializer.data, status=status.HTTP_200_OK)
 
