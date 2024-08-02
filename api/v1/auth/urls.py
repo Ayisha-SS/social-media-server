@@ -11,5 +11,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('create/',views.create),
     path('profile/',views.profile),
-    path('show/',views.show)
+    path('show/',views.show),
 ]
