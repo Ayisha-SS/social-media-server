@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 
 from posts.models import ViewPost
 
+
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def posts(request):
@@ -52,7 +53,7 @@ def post(request, pk):
     context = {
         "request": request
     }
-    serializer = PostViewSerializer(instance, context=context)
+    serializer = PostViewSerializer(instance, context = context)
     response_data = {
         "status_code": 200,
         "data": serializer.data

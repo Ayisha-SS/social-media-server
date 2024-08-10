@@ -1,13 +1,14 @@
 from rest_framework import status
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import generics
 from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
 from api.v1.createPost.serializers import CreateSerializer
-from posts.models import CreatePost
+from posts.models import CreatePost, ViewPost
 from api.v1.createPost.serializers import ViewSerializer
+from django.shortcuts import get_object_or_404
  
 
 @api_view(['GET', 'POST','DELETE'])
@@ -46,9 +47,39 @@ class DeletePostView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class PostDetailView(generics.RetrieveAPIView):
-    queryset = CreatePost.objects.all()
-    serializer_class = ViewSerializer
+# class PostDetailView(generics.RetrieveAPIView):
+#     queryset = CreatePost.objects.all()
+#     serializer_class = ViewSerializer
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def post(request, pk):
+    instance = get_object_or_404(ViewPost, pk=pk)
+    context = {
+        "request": request
+    }
+    serializer = ViewSerializer(instance, context=context)
+    response_data = {
+        "status_code": 200,
+        "data": serializer.data
+    }
+    return Response(response_data)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def createpost_detail(request, pk):
+    instance = get_object_or_404(CreatePost, pk=pk)  # Assuming you have a CreatePost model
+    context = {
+        "request": request
+    }
+    serializer = CreateSerializer(instance, context=context)  # Adjust serializer as needed
+    response_data = {
+        "status_code": 200,
+        "data": serializer.data
+    }
+    return Response(response_data)
 
 
 
