@@ -2,6 +2,10 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericRelation
 
 
 
@@ -50,6 +54,24 @@ class Categories(models.Model):
         return self.name
     
 
+class Comment(models.Model):
+    # Generic Foreign Key fields
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'comments'
+
+    def __str__(self):
+        return self.content
+    
+
 class CreatePost(models.Model):
     title = models.CharField(max_length=200)
     created_by = models.CharField(max_length=200)
@@ -62,13 +84,15 @@ class CreatePost(models.Model):
     view = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
 
+    comments = GenericRelation(Comment)
 
     class Meta:
         db_table = 'posts_create'
 
     def __str__(self):
         return self.title
-
+    
+    
 
 class ViewPost(models.Model):
     title = models.CharField(max_length=200)
@@ -79,6 +103,8 @@ class ViewPost(models.Model):
     like = models.BooleanField(default=False)
     view = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
+
+    comments = GenericRelation(Comment)
     
 
     class Meta:
@@ -87,18 +113,3 @@ class ViewPost(models.Model):
     def __str__(self):
         return self.title
     
-
-class Comments(models.Model):
-    comments = models.TextField()
-
-    class Meta:
-        db_table = 'posts_comment'
-
-    def __str__(self):
-        return self.comments
-    
-
-
-
-    
-

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DefaultUserAdmin
-from posts.models import CreatePost, ViewPost, Categories, User, Customer
+from posts.models import CreatePost, ViewPost, Categories, User, Customer, Comment
 
 
 class CreatepostAdmin(admin.ModelAdmin):
@@ -41,4 +41,4 @@ admin.site.register(User, UserAdmin)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ['username','role','email','password']
 
-admin.site.register(Customer, CustomerAdmin)
+admin.site.register(Comment)
