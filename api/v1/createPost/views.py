@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
 from api.v1.createPost.serializers import CreateSerializer
 from posts.models import CreatePost, ViewPost
-from api.v1.createPost.serializers import ViewSerializer
+from api.v1.createPost.serializers import  PostDetailSerializer
 from django.shortcuts import get_object_or_404
  
 
@@ -47,42 +47,41 @@ class DeletePostView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# class PostDetailView(generics.RetrieveAPIView):
-#     queryset = CreatePost.objects.all()
-#     serializer_class = ViewSerializer
+
+# @api_view(["GET"])
+# @permission_classes([AllowAny])
+# def post(request, pk):
+#     instance = get_object_or_404(ViewPost, pk=pk)
+#     context = {
+#         "request": request
+#     }
+#     serializer = ViewSerializer(instance, context=context)
+#     response_data = {
+#         "status_code": 200,
+#         "data": serializer.data
+#     }
+#     return Response(response_data)
 
 
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def post(request, pk):
-    instance = get_object_or_404(ViewPost, pk=pk)
-    context = {
-        "request": request
-    }
-    serializer = ViewSerializer(instance, context=context)
-    response_data = {
-        "status_code": 200,
-        "data": serializer.data
-    }
-    return Response(response_data)
+# @api_view(["GET"])
+# @permission_classes([AllowAny])
+# def createpost_detail(request, pk):
+#     instance = get_object_or_404(CreatePost, pk=pk)  # Assuming you have a CreatePost model
+#     context = {
+#         "request": request
+#     }
+#     serializer = CreateSerializer(instance, context=context)  # Adjust serializer as needed
+#     response_data = {
+#         "status_code": 200,
+#         "data": serializer.data
+#     }
+#     return Response(response_data)
 
 
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def createpost_detail(request, pk):
-    instance = get_object_or_404(CreatePost, pk=pk)  # Assuming you have a CreatePost model
-    context = {
-        "request": request
-    }
-    serializer = CreateSerializer(instance, context=context)  # Adjust serializer as needed
-    response_data = {
-        "status_code": 200,
-        "data": serializer.data
-    }
-    return Response(response_data)
+class PostDetailView(APIView):
+    permission_classes = [AllowAny]
 
-
-
-    
-
-
+    def get(self, request, pk):
+        instance = get_object_or_404(CreatePost, pk=pk)
+        serializer = PostDetailSerializer(instance, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)

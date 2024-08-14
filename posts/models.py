@@ -55,21 +55,18 @@ class Categories(models.Model):
     
 
 class Comment(models.Model):
-    # Generic Foreign Key fields
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
-
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    is_deleted = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'comments'
 
     def __str__(self):
-        return self.content
+        return self.comment
     
 
 class CreatePost(models.Model):
@@ -80,10 +77,10 @@ class CreatePost(models.Model):
     image = models.ImageField(upload_to='posts/images/')
     description = models.TextField(blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    create_post_comments = models.ManyToManyField('Comment', related_name='create_posts')
     like = models.BooleanField(default=False)
     view = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
-
     comments = GenericRelation(Comment)
 
     class Meta:
@@ -100,16 +97,18 @@ class ViewPost(models.Model):
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='posts/images/')
     description = models.TextField()
+    view_post_comments = models.ManyToManyField('Comment', related_name='view_posts')
     like = models.BooleanField(default=False)
     view = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
-
     comments = GenericRelation(Comment)
-    
 
     class Meta:
         db_table = 'posts_view'
 
     def __str__(self):
         return self.title
+    
+
+
     
