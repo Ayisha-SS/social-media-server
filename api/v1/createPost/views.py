@@ -78,24 +78,39 @@ class DeletePostView(APIView):
 #     return Response(response_data)
 
 
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def post(request,pk):
+# @api_view(["GET"])
+# @permission_classes([AllowAny])
+# def post(request,pk):
 
-    if CreatePost.objects.filter(pk=pk).exists():
-        instances = CreatePost.objects.get(pk=pk)
-        context = {
-            "request":request
-        }
-        serializer = PostViewSerializer(instances,context = context)
-        response_data = {
-            "status_code":6000,
-            "data":serializer.data
-        }
-        return Response(response_data)
+#     if CreatePost.objects.filter(pk=pk).exists():
+#         instances = CreatePost.objects.get(pk=pk)
+#         context = {
+#             "request":request
+#         }
+#         serializer = PostViewSerializer(instances,context = context)
+#         response_data = {
+#             "status_code":6000,
+#             "data":serializer.data
+#         }
+#         return Response(response_data)
+#     else:
+#         response_data = {
+#             "status_code":6001,
+#             "message":"No post founded"
+#         }
+#         return Response(response_data)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def post_detail(request, model_name, pk):
+    if model_name == 'createpost':
+        instance = get_object_or_404(CreatePost, pk=pk)
+        serializer = CreateSerializer(instance)
+    elif model_name == 'viewpost':
+        instance = get_object_or_404(ViewPost, pk=pk)
+        serializer = PostViewSerializer(instance)
     else:
-        response_data = {
-            "status_code":6001,
-            "message":"No post founded"
-        }
-        return Response(response_data)
+        return Response({"error": "Invalid model name"}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response({"status_code": 200, "data": serializer.data})
