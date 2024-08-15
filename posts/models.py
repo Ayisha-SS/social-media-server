@@ -1,14 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericRelation
-
-
-
 
 
 class User(AbstractUser):
@@ -62,7 +56,6 @@ class Comment(models.Model):
     created_by = models.CharField(max_length=255) 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    # created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
     class Meta:
@@ -75,7 +68,6 @@ class Comment(models.Model):
 class CreatePost(models.Model):
     title = models.CharField(max_length=200)
     created_by = models.CharField(max_length=200)
-    # created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.CharField(max_length=255)
     image = models.ImageField(upload_to='posts/images/')
     description = models.TextField(blank=False, null=False)
@@ -97,7 +89,6 @@ class CreatePost(models.Model):
 class ViewPost(models.Model):
     title = models.CharField(max_length=200)
     created_by = models.CharField(max_length=200)
-    # created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='posts/images/')
     description = models.TextField()

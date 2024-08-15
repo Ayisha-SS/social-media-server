@@ -48,59 +48,6 @@ class DeletePostView(APIView):
 
 
 
-# @api_view(["GET"])
-# @permission_classes([AllowAny])
-# def post(request, pk):
-#     instance = get_object_or_404(ViewPost, pk=pk)
-#     context = {
-#         "request": request
-#     }
-#     serializer = ViewSerializer(instance, context=context)
-#     response_data = {
-#         "status_code": 200,
-#         "data": serializer.data
-#     }
-#     return Response(response_data)
-
-
-# @api_view(["GET"])
-# @permission_classes([AllowAny])
-# def createpost_detail(request, pk):
-#     instance = get_object_or_404(CreatePost, pk=pk)  # Assuming you have a CreatePost model
-#     context = {
-#         "request": request
-#     }
-#     serializer = CreateSerializer(instance, context=context)  # Adjust serializer as needed
-#     response_data = {
-#         "status_code": 200,
-#         "data": serializer.data
-#     }
-#     return Response(response_data)
-
-
-# @api_view(["GET"])
-# @permission_classes([AllowAny])
-# def post(request,pk):
-
-#     if CreatePost.objects.filter(pk=pk).exists():
-#         instances = CreatePost.objects.get(pk=pk)
-#         context = {
-#             "request":request
-#         }
-#         serializer = PostViewSerializer(instances,context = context)
-#         response_data = {
-#             "status_code":6000,
-#             "data":serializer.data
-#         }
-#         return Response(response_data)
-#     else:
-#         response_data = {
-#             "status_code":6001,
-#             "message":"No post founded"
-#         }
-#         return Response(response_data)
-
-
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def post_detail(request, model_name, pk):
