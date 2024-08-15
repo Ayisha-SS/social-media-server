@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from django.views.decorators.csrf import csrf_exempt
 from api.v1.createPost.serializers import CreateSerializer
 from posts.models import CreatePost, ViewPost
-from api.v1.createPost.serializers import  PostDetailSerializer
+from .serializers import PostViewSerializer
 from django.shortcuts import get_object_or_404
  
 
@@ -78,10 +78,24 @@ class DeletePostView(APIView):
 #     return Response(response_data)
 
 
-class PostDetailView(APIView):
-    permission_classes = [AllowAny]
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def post(request,pk):
 
-    def get(self, request, pk):
-        instance = get_object_or_404(CreatePost, pk=pk)
-        serializer = PostDetailSerializer(instance, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    if CreatePost.objects.filter(pk=pk).exists():
+        instances = CreatePost.objects.get(pk=pk)
+        context = {
+            "request":request
+        }
+        serializer = PostViewSerializer(instances,context = context)
+        response_data = {
+            "status_code":6000,
+            "data":serializer.data
+        }
+        return Response(response_data)
+    else:
+        response_data = {
+            "status_code":6001,
+            "message":"No post founded"
+        }
+        return Response(response_data)

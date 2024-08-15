@@ -15,9 +15,13 @@ class CreateSerializer(serializers.ModelSerializer):
         return CreatePost.objects.create(**validated_data)
     
 
+class PostViewSerializer(ModelSerializer):
 
-class PostDetailSerializer(serializers.ModelSerializer):
+    # category = serializers.SerializerMethodField()
+
     class Meta:
-        model = CreatePost
         fields = ("id",'title','image','category','created_by','description')
-        read_only_fields = ['created_at', 'updated_at']
+        model = CreatePost
+
+    # def get_category(self,instance):
+    #     return instance.category.name

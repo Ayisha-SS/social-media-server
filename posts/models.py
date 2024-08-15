@@ -59,14 +59,17 @@ class Comment(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     content = models.TextField()
+    created_by = models.CharField(max_length=255) 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
 
     class Meta:
         db_table = 'comments'
 
     def __str__(self):
-        return self.comment
+        return self.content
     
 
 class CreatePost(models.Model):
@@ -94,6 +97,7 @@ class CreatePost(models.Model):
 class ViewPost(models.Model):
     title = models.CharField(max_length=200)
     created_by = models.CharField(max_length=200)
+    # created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Categories, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='posts/images/')
     description = models.TextField()
@@ -108,7 +112,4 @@ class ViewPost(models.Model):
 
     def __str__(self):
         return self.title
-    
-
-
     
