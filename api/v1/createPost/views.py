@@ -18,8 +18,10 @@ def create_post(request):
     
     if request.method == 'GET':
         posts = CreatePost.objects.all()  
-        # posts = CreatePost.objects.filter(created_by=request.user)
-        serializer = CreateSerializer(posts, many=True,context={'request': request})  
+        serializer = CreateSerializer(posts, many=True, context={'request': request})  
+        data = serializer.data
+        for post in data:
+            post['image'] = request.build_absolute_uri(post['image'])
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
@@ -53,10 +55,10 @@ class DeletePostView(APIView):
 def post_detail(request, model_name, pk):
     if model_name == 'createpost':
         instance = get_object_or_404(CreatePost, pk=pk)
-        serializer = CreateSerializer(instance)
+        serializer = CreateSerializer(instance, context={'request': request})
     elif model_name == 'viewpost':
         instance = get_object_or_404(ViewPost, pk=pk)
-        serializer = PostViewSerializer(instance)
+        serializer = PostViewSerializer(instance, context={'request': request})
     else:
         return Response({"error": "Invalid model name"}, status=status.HTTP_400_BAD_REQUEST)
 

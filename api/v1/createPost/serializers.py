@@ -5,6 +5,9 @@ from posts.models import CreatePost, ViewPost
 class CreateSerializer(serializers.ModelSerializer):
     image = serializers.ImageField()
 
+    def get_image(self, obj):
+        return self.context['request'].build_absolute_uri(obj.image.url)
+
     class Meta:
         model = CreatePost
         fields = ('id','title','image','category','description','created_at','created_by')
@@ -17,11 +20,9 @@ class CreateSerializer(serializers.ModelSerializer):
 
 class PostViewSerializer(ModelSerializer):
 
-    # category = serializers.SerializerMethodField()
 
     class Meta:
         fields = ("id",'title','image','category','created_by','description')
         model = CreatePost
 
-    # def get_category(self,instance):
-    #     return instance.category.name
+    

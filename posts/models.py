@@ -97,6 +97,7 @@ class ViewPost(models.Model):
     view = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     comments = GenericRelation(Comment)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'posts_view'
