@@ -65,6 +65,21 @@ class Comment(models.Model):
         return self.content
     
 
+class Like(models.Model):
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'posts_like'
+        unique_together = ('user', 'content_type', 'object_id')  
+
+    def __str__(self):
+        return f'{self.user.username} liked {self.content_object}'
+    
+
 class CreatePost(models.Model):
     title = models.CharField(max_length=200)
     created_by = models.CharField(max_length=200)
@@ -77,14 +92,17 @@ class CreatePost(models.Model):
     view = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     comments = GenericRelation(Comment)
+    likes = GenericRelation(Like)  
 
     class Meta:
         db_table = 'posts_create'
 
     def __str__(self):
         return self.title
-    
-    
+
+    def get_like_count(self):
+        return self.likes.count()
+
 
 class ViewPost(models.Model):
     title = models.CharField(max_length=200)
@@ -98,10 +116,20 @@ class ViewPost(models.Model):
     is_deleted = models.BooleanField(default=False)
     comments = GenericRelation(Comment)
     created_at = models.DateTimeField(auto_now_add=True)
+    likes = GenericRelation(Like)  
 
     class Meta:
         db_table = 'posts_view'
 
     def __str__(self):
         return self.title
+
+    def get_like_count(self):
+        return self.likes.count()
+
+   
+    
+
+
+
     
